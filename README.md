@@ -1,3 +1,63 @@
+# Python Scripts UPDATE
+## 2024_12_26
+
+This repository represents my efforts to update and extend the great work by _carberra_, implementing bash scripts to install and uninstall various versions of python. His original README is found below this preface.
+
+**The salient alterations and additions are:**
+
+1. Scripts for *Redhat*-derived linux distributions are added.
+
+2. It is considered best practice to update your system prior to installing new software. The *upgrade* subcommand for Redhat's *dnf* command includes an update; *dnf* has no separate *update* subcommand. To be consistent, the *Debian* install script performs both *update* and *upgrade*, however not *dist-upgrade* and not *full-upgrade*.
+
+3. I left off the installation of *wget* as most distros now either include it automatically or install it with *upgrade*
+
+4. Adjustments are made to some of the original bash language code to enhance robustness. Of note, point 1. above is one example of the subtle bash language differences between *Redhat* and *Debian*
+
+5. Code is added and modified to deal with package changes made by the python developers
+
+6. Code is added and modified to deal with package changes made in the APT (Debian) and DNF (Redhat) repositories
+
+7. Comments are added and extended in places
+
+8. In line with script security recommendations, many commands are now given as:
+$(which *insert your command here*)
+
+9. The verbose output of most commands is diverted from the screen to */dev/null 2>&1*.
+
+10. To speed-up the installation of python, recruitment of all available CPU cores is enforced with *$(nproc)*
+
+11. Universal test scripts are coded to test the results of installation and uninstallation
+
+12. The issues causing some annoying yet benign warnings e.g; "dbm module cannot be installed" have been investigated by me with my appraisal echoed to the screen.
+
+13. The uninstall script also selectively removes python scripts created by the deleted python version
+
+14. Description of the testing environments and conditions is found at the top of the scripts
+
+## Notes:
+
+- Using *> /dev/null 2>&1* aggressively removes screen output, as compared to applying the *-q, -qq* or *--quiet* options. You will need to comment this code out to investigate errors.
+
+- I hope I have been able to include all the necessary dependencies for both distro families (*Redhat* and *Debian*). Any feedback is welcome.
+
+- The python developers seem to have a 'rolling technical debt' approach to deprecation, as a feature is first commented-out with a promise of a more elegant solution in a later distro. This results in a lot of warnings that are usually false alarms. I have done my best to investigate some of the more concerning ones and make adjustments accordingly. I could not eliminate the annoying *build not found* warning.
+
+- These scripts will steadily go stale as changes are made continuously to *python* and to the repositories.
+
+- The test scripts are fairly simple, ensuring the new installation can carry-out some basic python functionality, and that the uninstallation script removes what it is supposed to remove. Any further testing recommendations are welcome and will be considered.
+
+- As of this date, installations of *Debian*-derived distros default to *python 3.11.2*, *Redhat*-derived distros default to *python 3.13.0*. Release of 3.14 appears to be on the near-horizon.
+
+- As you know, a fresh installation of Linux starts off with a basic PATH variable that is usually a concatenation of the paths of five directories, and may look like this: */usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games*
+
+- For ease-of-use, include bash scripts on your own PATH so that access to them is persistent and available from all directories. It is considered best practice to place these in the **bin** directory at the end of this particular path: **/usr/local/bin**.
+
+- An alternative, described by *carberra* below and also used by me, is to edit the *.bashrc* file in your home directory to add the path of your bash script to the PATH variable.
+
+- This software is unlicensed, presented 'as-is' for free use by anybody, without warranty.
+
+
+# --------- README.md by carberra, .circa 2022 ---------
 # Python Scripts
 
 ## Installing the Scripts

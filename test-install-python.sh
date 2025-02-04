@@ -1,10 +1,12 @@
 #!/bin/env bash
 
 # Author: alphaveneno
-# Date: 2024/12/26
-# tested on: MX Linux 23.1 (linux kernel 6.5.0), Debian 12.8 (linux kernel 6.12.4)
-# and Fedora 41 (linux kernel 6.11.0)
-# with python 3.10.15, 3.11.2, 3.12.7 & 3.13.0
+# Date: 2025/01/23
+# tested on: MX Linux 23.1 (linux kernel 6.5.0),
+# Debian 12.8 (linux kernel 6.12.4),
+# Fedora 41 (linux kernel 6.11.0),
+# ArchLinux (linux kernel 6.12.10-arch1-1)11.0)
+# with python 3.10.15, 3.11.9, 3.12.7 & 3.13.0
 # should work on all Linux distributions
 
 # to give read/write/execution rights for this script _solely_ to the user:
@@ -94,4 +96,5 @@ expected_version=$1
 # Call the functions with the user-provided version
 assert_python_version "$expected_version"
 test_python_shell "$expected_version"
+
 

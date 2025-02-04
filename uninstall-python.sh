@@ -4,9 +4,13 @@
 # https://github.com/parafoxia/python-scripts
 # https://www.youtube.com/watch?v=S4HfueSI-ow
 # modifed by: alphaveneno
-# Date: 2024/12/26
-# tested on MX Linux 23.1 (linux kernel 6.5.0), Debian 12.8 (linux kernel 6.12.4), Fedora 41 (live USB, linux kernel 6.11.4)
-# with python 3.10.15, 3.11.2, 3.12.7 & 3.13.0
+# Date: 2025/01/23
+# tested on MX Linux 23.1 (linux kernel 6.5.0),
+# Debian 12.8 (linux kernel 6.12.4),
+# Fedora 41 (live USB, linux kernel 6.11.4)
+# ArchLinux (linux kernel 6.12.9-arch1-1)
+
+# tested with: python 3.10.15, 3.11.2, 3.12.7 & 3.13.0
 # script is for all versions of Linux
 
 # to give read/write/execution rights for this script _solely_ to the user:
@@ -56,8 +60,35 @@ for VER do
         exit 2
     fi
 
+    # Remove any packages the version of pip may have installed globally
+    # List all installed packages and save them to this temporary file
+     python${VER} -m pip freeze > "installed_${VER}_packages.txt"
+
+    # Uninstall all packages listed in the file
+    xargs python${VER} -m pip uninstall -y < "installed_${VER}_packages.txt" > /dev/null 2>&1
+
+    # Remove the file after uninstallation
+    $(which rm) "installed_${VER}_packages.txt" > /dev/null 2>&1
+    
+    # delete virtual environments created by 'venv' created by this python version
+    # does not remove virtual environemnts created by other versions of python
+    # Find all files named 'pyvenv.cfg' starting from the home directory
+    find ~ -name "pyvenv.cfg" | while read -r file > /dev/null 2>&1; do
+        # Check if the file contains the string with the python version to be deleted e.g;'python3.12'
+        if grep -q "python${VER}" "$file"; then
+	   # Get the parent directory of the file
+	   parent_dir=$(dirname "$file")
+	   # Delete the file
+	   rm "$file"
+	   # Delete all files and directories in the same folder
+	   rm -rf "$parent_dir"/*
+	   # Delete the parent folder
+	   rm -rf "$parent_dir"
+        fi
+    done
+
     # Remove files. There may not be a 2to3-${VER} file with 3.13 and beyond
-    # As of 3.12, python${VER}-embed.pc and python${VER}.pc files
+    # As of 3.12, python${VER}-embed.pc and python${VER}}.pc files
     # are found in a directory called 'pkgconfig' (see below)
     $(which sudo) $(which rm) -rf "${BIN_PATH}/2to3-${VER}" \
         "${BIN_PATH}/idle${VER}" \
@@ -68,14 +99,14 @@ for VER do
         "${LIB_PATH}/libpython${VER}.so" \
         "${LIB_PATH}/libpython${VER}.so.1.0" \
         "${LIB_PATH}/python${VER}" \
-        "${LIB_PATH}/pkgconfig/python$-{VER}-embed.pc" \
-        "${LIB_PATH}/pkgconfig/python$-{VER}.pc" \
+        "${LIB_PATH}/pkgconfig/python${VER}-embed.pc" \
+        "${LIB_PATH}/pkgconfig/python${VER}.pc" \
         "${LIB_PATH}/python${VER}-embed.pc" \
         "${LIB_PATH}/libpython${VER}.a" \
         "${LIB_PATH}/python${VER}.pc" \
         "${USER_LIB_PATH}/python${VER}" \
         "${USER_BIN_PATH}/pip${VER}" \
-        "${USER_WHEEL_PATH}/${VER}"
+        "${USER_WHEEL_PATH}/${VER}" > /dev/null 2>&1
      
      # remove any scripts put in this directory created by
      # versions of python you have designated for removal.
@@ -89,7 +120,7 @@ for VER do
      		if [[ "${FIRST_LINE}" == *"/usr/local/bin/python${VER}"* ]]; then
      			$(which echo) "Deleting ${FILE}"
      			# Delete the file
-     			$(which sudo) $(which rm) "${FILE}"
+     			$(which sudo) $(which rm) "${FILE}" > /dev/null 2>&1
      		fi
      	fi
      done

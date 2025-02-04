@@ -1,10 +1,12 @@
 #!/bin/env bash
 
 # Author: alphaveneno
-# Date: 2024/12/26
-# tested on: MX Linux 23.1 (linux kernel 6.5.0), Debian 12.8 (linux kernel 6.12.4)
-# and Fedora 41 (linux kernel 6.11.0)
-# with python 3.10.15, 3.11.2, 3.12.7 & 3.13.0
+# Date: 2025/01/23
+# tested on: MX Linux 23.1 (linux kernel 6.5.0),
+# Debian 12.8 (linux kernel 6.12.4),
+# Fedora 41 (linux kernel 6.11.0),
+# ArchLinux (linux kernel 6.12.10-arch1-1)
+# with python 3.10.15, 3.11.9, 3.12.7 & 3.13.0
 # should work on all Linux distributions
 
 # to give read/write/execution rights for this script _solely_ to the user:
@@ -88,9 +90,10 @@ fi
 
 # Check each path for removal
 for path in "${paths_to_check[@]}"; do
-    check_removed "$path"
+    check_removed "$path" > /dev/null 2>&1
 done
 
 $(which echo) "All checks passed: Python ${expected_version} and its files are removed."
+
 
 

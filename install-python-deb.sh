@@ -4,14 +4,15 @@
 # https://github.com/parafoxia/python-scripts
 # https://www.youtube.com/watch?v=S4HfueSI-ow
 # modified by: alphaveneno
-# Date: 2024/12/26
+# Date: 2025/01/23
 # tested on: MX Linux 23.1 (linux kernel 6.5.0), Debian 12.8 (linux kernel 6.12.4)
 # tested with python 3.10.15, 3.12.7 & 3.13.0
 # script is for Debian-derived versions of Linux OS (e.g, Debian, Ubuntu, MX Linux, Linux Mint and so on)
 
 # Arch-derived versions of Linux (e.g; Arch, Manjaro, ArcoLinux), Slack,
-# OpenSuse-derived versions and other major Linux distributions
-# have different commands and extension suffixes from RedHat and Debian
+# OpenSuse-derived versions, RedHat-derived versions (e.g; Fedora, Rocky, Centos) 
+# and other major Linux distributions
+# have some different commands and extension suffixes from Debian
 
 # to give read/write/execution rights for this script _solely_ to the user:
 # 1) open a terminal in the _same_ directory as this script
@@ -67,6 +68,7 @@ $(which echo) "*****************************************************************
 $(which echo) "_dbm module installation has been blocked, useful for legacy code only"
 $(which echo) "**********************************************************************"
 
+# remove unnecessary packages
 $(which sudo) $(which apt-get) autoremove -y > /dev/null 2>&1
 
 cd /tmp
@@ -104,7 +106,7 @@ for VER in "$@"; do
 	PYTHON_MINOR=$($(which echo) $VER | cut -d. -f2)
 	
 	# Checks the version and runs the appropriate configure command
-	# Note: pip is also installed, this will be the most recent stable version,
+	# Note: pip is also installed
 	# and more recent than the version in the APT (a.k.a SYNAPTIC) repository
 	$(which echo) "Configuring Python $VER..."
 	if [ "$PYTHON_MAJOR" -lt 3 ] || { [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -le 11 ]; }; then
@@ -121,6 +123,10 @@ for VER in "$@"; do
 
     $(which echo) "Installing Python $VER..."
     $(which sudo) $(which make) -s altinstall  > /dev/null 2>&1
+
+    # update pip
+    $(which echo) "Upgrading pip ..."
+    python${PYTHON_MAJOR}.${PYTHON_MINOR} -m pip install --upgrade pip --disable-pip-version-check > /dev/null 2>&1
     
 done
 

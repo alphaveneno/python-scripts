@@ -4,14 +4,15 @@
 # https://github.com/parafoxia/python-scripts
 # https://www.youtube.com/watch?v=S4HfueSI-ow
 # modified by: alphaveneno
-# Date: 2024/12/26
+# Date: 2025/01/23
 # tested on: Fedora 41 (live USB, linux kernel 6.11.4)
 # tested with python 3.10.15, 3.11.2, 3.12.7
 # script is for Redhat-derived versions of Linux OS (e.g; Fedora, Rocky, Centos and so on)
 
 # Arch-derived versions of Linux (e.g; Arch, Manjaro, ArcoLinux), Slack,
-# OpenSuse-derived versions and other major Linux distributions
-# have different commands and extension suffixes from RedHat and Debian
+# OpenSuse-derived versions, Debian-derived versions (e.g; Debian, Ubuntu, Linux Mint)
+# and other major Linux distributions
+# have some different commands and extension suffixes from RedHat
 
 # to give read/write/execution rights for this script _solely_ to the user:
 # 1) open a terminal in the _same_ directory as this script
@@ -43,12 +44,13 @@ $(which sudo) $(which dnf) upgrade -y  > /dev/null 2>&1
 # for fedora 41, using dnf5:
 $(which sudo) $(which dnf) install dnf-plugins-core @development-tools -qy > /dev/null 2>&1
 
-# for versions of fedora with dnf4, this may be a necessary substitute for the line of code above:
+# for versions of fedora with dnf4, it may be necessary substitute this line of code for the one above:
 # $(which sudo) $(which dnf) group install "Development Tools"
 
 # if you want a non-English installation use this command:
 # $(which sudo) $(which dnf) install glibc-langpack-<insert the two (or three) letter country abbreviation here>
 # e.g; $(which sudo) $(which dnf) install glibc-langpack-de, for German
+
 # to prevent the slow installation of language packs:
 $(which sudo) $(which dnf) versionlock add glibc-all-langpacks
 
@@ -69,6 +71,7 @@ $(which sudo) $(which dnf) install \
 	libuuid-devel \
 	python3-zlib-ng -y  > /dev/null 2>&1
 
+# remove unnecessary packages
 $(which sudo) $(which dnf) autoremove -y > /dev/null 2>&1
 
 cd /tmp
@@ -102,7 +105,7 @@ for VER in "$@"; do
     cd Python-$VER
 
     $(which echo) "Configuring Python $VER..."
-    # Note: pip is also installed, this will be the most recent stable version,
+    # Note: pip is also installed
     ./configure -q --enable-optimizations --with-ensurepip=install  > /dev/null 2>&1
 
     # for faster installation, $(nproc) will run 'make' on all possible CPU cores on your system
@@ -115,6 +118,14 @@ for VER in "$@"; do
     $(which echo) "***************************"
     $(which echo) "nis module is deprecated"
     $(which echo) "***************************"
+
+    # Get the major and minor versions of this Python
+    PYTHON_MAJOR=$($(which echo) $VER | cut -d. -f1)
+    PYTHON_MINOR=$($(which echo) $VER | cut -d. -f2)
+
+    # update pip
+    $(which echo) "Upgrading pip ..."
+    python${PYTHON_MAJOR}.${PYTHON_MINOR} -m pip install --upgrade pip --disable-pip-version-check > /dev/null 2>&1
     
 done
 
